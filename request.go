@@ -35,6 +35,11 @@ func (r *Request) ContentType(ctx context.Context) string {
 	return r.Get(ctx, "content-type")
 }
 
+// Tenant get request tenant
+func (r *Request) Tenant(ctx context.Context) string {
+	return r.Get(ctx, "tenant")
+}
+
 // UserAgent get request user-agent
 func (r *Request) UserAgent(ctx context.Context) string {
 	return r.Get(ctx, "user-agent")
@@ -42,12 +47,14 @@ func (r *Request) UserAgent(ctx context.Context) string {
 
 // Get get request metadata
 func (r *Request) Get(ctx context.Context, key string) string {
-	if md, ok := metadata.FromIncomingContext(ctx); ok {
-		tmp := fmt.Sprintf("grpcgateway-%s", key)
-		if value, ok := md[tmp]; ok {
+	in, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		gw := fmt.Sprintf("grpcgateway-%s", key)
+		if value, ok := in[gw]; ok {
 			return value[0]
 		}
-		if value, ok := md[key]; ok {
+
+		if value, ok := in[key]; ok {
 			return value[0]
 		}
 	}

@@ -16,12 +16,13 @@ func NewResponse() *Response {
 
 // Set set response metadata
 func (r *Response) Set(ctx context.Context, kv ...string) context.Context {
-	omd := metadata.Pairs(kv...)
-	if imd, ok := metadata.FromIncomingContext(ctx); ok {
-		omd = metadata.Join(omd, imd)
+	out := metadata.Pairs(kv...)
+	if in, ok := metadata.FromIncomingContext(ctx); ok {
+		out = metadata.Join(out, in)
 	}
-	if omd.Len() != 0 {
-		return metadata.NewOutgoingContext(ctx, omd)
+
+	if out.Len() != 0 {
+		return metadata.NewOutgoingContext(ctx, out)
 	}
 	return ctx
 }
